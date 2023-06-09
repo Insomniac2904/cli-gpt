@@ -1,8 +1,7 @@
 const inquirer = require("inquirer");
-const signUp = require("../auth/sign-up");
-const launchOptions = require("../app");
+const signUp = require("../../auth/sign-up");
 
-const SignUpPage = () => {
+const SignUpPage = (launchOptions) => {
   inquirer
     .prompt({
       type: "list",
@@ -11,10 +10,10 @@ const SignUpPage = () => {
     })
     .then((answer) => {
       if (answer.signUpPageOptions == "New User") {
-        signUp();
+        signUp(launchOptions);
       } else {
         launchOptions();
       }
     });
 };
-module.exports = { SignUpPage };
+module.exports = SignUpPage;

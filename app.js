@@ -1,7 +1,7 @@
 require("dotenv").config();
 const connectdb = require("./db/db");
 const inquirer = require("inquirer");
-const SignUpPage = require("./pages/sign-up-page");
+const SignUpPage = require("./pages/signUp/sign-up-page");
 
 async function start() {
   try {
@@ -12,6 +12,7 @@ async function start() {
     console.log(error);
   }
 }
+
 async function launchOptions() {
   inquirer
     .prompt({
@@ -23,16 +24,16 @@ async function launchOptions() {
       if (ans.launchOptions == "SignIn") {
       }
       if (ans.launchOptions == "SignUp") {
-        SignUpPage();
+        SignUpPage(launchOptions);
       }
       if (ans.launchOptions == "Change Details") {
       }
       if (ans.launchOptions == "Exit") {
-        console.log("exiting application");
-        return;
+        console.log("Exiting Application");
+        process.exit(0);
       }
     });
 }
 
-module.exports = { launchOptions };
+module.exports = launchOptions;
 start();

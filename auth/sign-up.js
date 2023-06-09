@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const inquirer = require("inquirer");
 const { createSpinner } = require("nanospinner");
 
-async function signUp() {
+async function signUp(launchOptions) {
   inquirer
     .prompt([
       {
@@ -13,20 +13,16 @@ async function signUp() {
       },
     ])
     .then(async (response) => {
-      const spinner = createSpinner("Searching existing user...");
+      // const spinner = createSpinner("Searching existing user...");
       let currUser;
       try {
-        spinner.start();
         currUser = await user.findOne({ email: response.email });
-        spinner.stop();
-        spinner.clear();
       } catch (error) {
-        spinner.stop();
-        spinner.clear();
         console.log(error);
       }
       if (currUser) {
         console.log("You are already registered please SignIn.");
+        launchOptions();
       } else {
         inquirer
           .prompt([
@@ -49,9 +45,13 @@ async function signUp() {
           .then(async (ans) => {
             ans["email"] = response.email;
             ans.password = await bcrypt.hash(ans.password, 10);
-            console.log(ans);
-            await user.save().then((ans, err) => {
-              res.send("Congrats! You have successfully Registered. Login!");
+            // console.log(ans);
+            const newUser = new user(ans);
+            await newUser.save().then((result) => {
+              console.log(
+                "Congrats you have Successfully registered as a User..."
+              );
+              launchOptions();
             });
           });
       }
@@ -61,4 +61,4 @@ async function signUp() {
     });
 }
 
-module.exports = { signUp };
+module.exports = signUp;
