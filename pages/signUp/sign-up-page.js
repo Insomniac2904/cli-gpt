@@ -10,7 +10,7 @@ const SignUpPage = (launchOptions) => {
     })
     .then((answer) => {
       if (answer.signUpPageOptions == "New User") {
-        signUp(launchOptions);
+        signUp(launchOptions, SignUpPage);
       } else {
         launchOptions();
       }

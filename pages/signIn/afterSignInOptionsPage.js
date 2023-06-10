@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const changeDetails = require("./change-details");
 
 const afterSignInPage = (launchOptions) => {
   inquirer
@@ -9,6 +10,7 @@ const afterSignInPage = (launchOptions) => {
     })
     .then((answer) => {
       if (answer.afterSignInPageOptions == "Change Details") {
+        changeDetails(afterSignInPage);
       }
       if (answer.afterSignInPageOptions == "Chat") {
       } else {
