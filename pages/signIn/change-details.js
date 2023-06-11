@@ -1,22 +1,26 @@
-const user = require("../models/user");
 const inquirer = require("inquirer");
+const changeName = require("./changeName");
+const changeApiKey = require("./changeApiKey");
+const changePassword = require("./changePassword");
 
-const changeDetails = (afterSignInPage, currUser) => {
+const changeDetails = (signInPageOptions, currUser) => {
   inquirer
     .prompt({
       name: "ChangeDetailsOptions",
       type: "checkbox",
-      choices: ["Name", "Api Key", "Password"],
+      choices: ["Name", "Api Key", "Password", "Go back"],
     })
     .then((ans) => {
       if (ans.changeDetailsOptions == "Name") {
-        changeName(currUser);
+        changeName(currUser, changeDetails);
       }
       if (ans.changeDetailsOptions == "Api Key") {
-        changeApiKey(currUser);
+        changeApiKey(currUser, changeDetails);
       }
       if (ans.changeDetailsOptions == "Password") {
-        changePassword(currUser);
+        changePassword(currUser, changeDetails);
+      } else {
+        return signInPageOptions();
       }
     });
 };

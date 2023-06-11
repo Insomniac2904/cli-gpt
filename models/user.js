@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     max: 1024,
     default: process.env.DEFAULT_API,
   },
+  paraphrase: {
+    type: String,
+    max: 1024,
+  },
 });
 
 module.exports = mongoose.model("user", UserSchema);

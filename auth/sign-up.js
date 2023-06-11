@@ -2,6 +2,7 @@ const user = require("../models/user");
 const bcrypt = require("bcrypt");
 const inquirer = require("inquirer");
 const { createSpinner } = require("nanospinner");
+const crypto = require("crypto");
 
 async function signUp(launchOptions) {
   inquirer
@@ -22,7 +23,7 @@ async function signUp(launchOptions) {
       try {
         spinner.start();
         currUser = await user.findOne({ email: response.email });
-        spinner.stop();
+        spinner.clear();
       } catch (error) {
         console.log(error);
         spinner.clear();
@@ -39,20 +40,26 @@ async function signUp(launchOptions) {
               name: "password",
             },
             {
-              type: "text",
+              type: "input",
               message: "Enter your Name (Not NULL)",
               name: "name",
             },
             {
-              type: "text",
+              type: "input",
               message: "Enter your Api Key (Not NULL)",
               name: "apiKey",
+            },
+            {
+              type: "input",
+              message: "Enter secret Paraphrase ( DONOT SHARE )",
+              name: "paraphrase",
             },
           ])
           .then(async (ans) => {
             if (
               !ans.apiKey.length ||
               !ans.name.length ||
+              !ans.paraphrase.length ||
               ans.password.length < 6
             ) {
               console.log("Please enter proper Credentials");
@@ -62,6 +69,7 @@ async function signUp(launchOptions) {
             ans.name = ans.name.trim();
             ans.apiKey = ans.apiKey.trim();
             ans.password = await bcrypt.hash(ans.password, 10);
+            ans.paraphrase = encryptParaphrase(ans.paraphrase);
             const newUser = new user(ans);
             await newUser.save().then((result) => {
               console.log(
@@ -76,5 +84,29 @@ async function signUp(launchOptions) {
       console.log(err);
     });
 }
+
+// symetric encryption code
+const encryptParaphrase = (
+  text,
+  algo = process.env.ALGO,
+  iv = process.env.IV_BYTES,
+  rv = process.env.R_BYTES
+) => {
+  if (
+    algo != process.env.ALGO ||
+    iv != process.env.IV_BYTES ||
+    rv != process.env.R_BYTES
+  ) {
+    //! todo change environment variables
+  }
+  const algorithm = algo;
+  const initVector = crypto.randomBytes(iv);
+  const message = text.trim();
+  const Securitykey = crypto.randomBytes(rv);
+  const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
+  let encryptedData = cipher.update(message, "utf-8", "hex");
+  encryptedData += cipher.final("hex");
+  return encryptedData;
+};
 
 module.exports = signUp;
