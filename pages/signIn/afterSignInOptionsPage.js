@@ -1,7 +1,8 @@
 const inquirer = require("inquirer");
 const changeDetails = require("./change-details");
+const chat = require("./chat");
 
-const afterSignInPage = (launchOptions, currUser) => {
+const afterSignInPage = (currUser) => {
   inquirer
     .prompt({
       type: "list",
@@ -10,12 +11,13 @@ const afterSignInPage = (launchOptions, currUser) => {
     })
     .then((answer) => {
       if (answer.afterSignInPageOptions == "Change Details") {
-        changeDetails(afterSignInPage, currUser);
+        changeDetails(currUser);
       }
       if (answer.afterSignInPageOptions == "Chat") {
-        //! todo chat
+        chat(currUser);
       } else {
         logOut(currUser); //! TODO
+        const launchOptions = require("../app");
         return launchOptions();
       }
     });

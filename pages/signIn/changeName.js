@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 
-const changeName = (currUser, afterSignInPage) => {
+const changeName = (currUser) => {
   inquirer
     .prompt({
       name: "name",
@@ -15,9 +15,11 @@ const changeName = (currUser, afterSignInPage) => {
         currUser.update({ name: resp.name }).then((error) => {
           if (error) {
             console.log(error);
+            const afterSignInPage = require("./afterSignInOptionsPage");
             return afterSignInPage();
           } else {
             console.log("Username successfully Updated.");
+            const afterSignInPage = require("./afterSignInOptionsPage");
             return afterSignInPage();
           }
         });

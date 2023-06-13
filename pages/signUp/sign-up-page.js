@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const signUp = require("../../auth/sign-up");
 
-const SignUpPage = (launchOptions) => {
+const SignUpPage = () => {
   inquirer
     .prompt({
       type: "list",
@@ -10,8 +10,9 @@ const SignUpPage = (launchOptions) => {
     })
     .then((answer) => {
       if (answer.signUpPageOptions == "New User") {
-        signUp(launchOptions, SignUpPage);
+        signUp();
       } else {
+        const launchOptions = require("../../app");
         launchOptions();
       }
     });

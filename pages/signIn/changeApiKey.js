@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const bcrypt = require("bcrypt");
-const changeApiKey = (currUser, changeDetails) => {
+
+const changeApiKey = (currUser) => {
   inquirer
     .prompt({
       type: "input",
@@ -9,27 +10,32 @@ const changeApiKey = (currUser, changeDetails) => {
     })
     .then((ans) => {
       const dbParaphrase = currUser.paraphrase;
-      if (decrypt(dbParaphrase, ans.paraphrase)) {
-        inquired
+      if (bcrypt.compare(ans.paraphrase.trim(), dbParaphrase)) {
+        inquirer
           .prompt({
             type: "input",
-            name: "newpass",
-            message: "Enter new Password",
+            name: "newKey",
+            message: "Enter new Api Key",
           })
           .then(async (ans) => {
-            if (!ans.newpass.length()) {
+            if (!ans.newKey.length()) {
               // go back if new pass is empty
+              console.log("New Api Key was empty. Going back...");
+              const changeDetails = require("./change-details");
               return changeDetails();
             } else {
-              ans.newpass = await bcrypt.hash(ans.newpass, 10);
-              currUser.update({ password: newpass });
+              const newpass = await bcrypt.hash(ans.newpass.trim(), 10);
+              await currUser.update({ password: newpass.trim() });
             }
           });
       } else {
-        console.log("Sorry Incorrect Paraphrase");
-        return afterSignInPage(); // ! check here might throw error here , not passing launchOptions
+        console.log("Incorrect Paraphrase! Going Back. ");
+        const afterSignInPage = require("./afterSignInOptionsPage");
+        return afterSignInPage();
       }
     });
 };
+
+//* TODO decrypt the paraphrase function
 
 module.exports = changeApiKey;

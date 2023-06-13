@@ -24,9 +24,7 @@ async function launchOptions() {
       if (ans.launchOptions == "SignIn") {
       }
       if (ans.launchOptions == "SignUp") {
-        SignUpPage(launchOptions);
-      }
-      if (ans.launchOptions == "Change Details") {
+        SignUpPage();
       }
       if (ans.launchOptions == "Exit") {
         console.log("Exiting Application");

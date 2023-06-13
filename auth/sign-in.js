@@ -1,9 +1,8 @@
 const user = require("../models/user");
 const bcrypt = require("bcrypt");
 const inquirer = require("inquirer");
-const afterSignInPage = require("../pages/signIn/afterSignInOptionsPage");
 
-const signIn = (launchOptions) => {
+const signIn = () => {
   inquirer
     .prompt({
       type: "input",
@@ -14,9 +13,10 @@ const signIn = (launchOptions) => {
       const currUser = await user.findOne({ email: ans.email });
       if (!currUser) {
         console.log("Sorry no user with this email exists, Please SignUp");
+        const launchOptions = require("../app");
         launchOptions();
       } else {
-        passwordInputAndCheck(launchOptions);
+        passwordInputAndCheck();
       }
     });
 };
@@ -33,7 +33,7 @@ const signIn = (launchOptions) => {
 //? ->retry    ..again email and password asked
 //?            ..if password correct auth takes place
 
-const passwordInputAndCheck = (launchOptions) => {
+const passwordInputAndCheck = () => {
   inquirer
     .prompt({
       type: "password",
@@ -52,9 +52,11 @@ const passwordInputAndCheck = (launchOptions) => {
               choices: ["Go Back", "Retry"],
             })
             .then((res) => {
-              if (res.signInFailOptions == "Go Back") launchOptions();
-              else {
-                signIn(launchOptions);
+              if (res.signInFailOptions == "Go Back") {
+                const launchOptions = require("../app");
+                launchOptions();
+              } else {
+                signIn();
               }
             });
         } else {

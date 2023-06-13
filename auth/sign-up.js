@@ -4,7 +4,7 @@ const inquirer = require("inquirer");
 const { createSpinner } = require("nanospinner");
 const crypto = require("crypto");
 
-async function signUp(launchOptions) {
+async function signUp() {
   inquirer
     .prompt([
       {
@@ -30,6 +30,7 @@ async function signUp(launchOptions) {
       }
       if (currUser) {
         console.log("You are already registered please SignIn.");
+        const launchOptions = require("../app");
         launchOptions();
       } else {
         inquirer
@@ -69,12 +70,13 @@ async function signUp(launchOptions) {
             ans.name = ans.name.trim();
             ans.apiKey = ans.apiKey.trim();
             ans.password = await bcrypt.hash(ans.password, 10);
-            ans.paraphrase = encryptParaphrase(ans.paraphrase);
+            ans.paraphrase = bcrypt.hash(ans.paraphrase, 10);
             const newUser = new user(ans);
             await newUser.save().then((result) => {
               console.log(
                 "Congrats you have Successfully registered as a User..."
               );
+              const launchOptions = require("../app");
               launchOptions();
             });
           });
@@ -86,27 +88,5 @@ async function signUp(launchOptions) {
 }
 
 // symetric encryption code
-const encryptParaphrase = (
-  text,
-  algo = process.env.ALGO,
-  iv = process.env.IV_BYTES,
-  rv = process.env.R_BYTES
-) => {
-  if (
-    algo != process.env.ALGO ||
-    iv != process.env.IV_BYTES ||
-    rv != process.env.R_BYTES
-  ) {
-    //! todo change environment variables
-  }
-  const algorithm = algo;
-  const initVector = crypto.randomBytes(iv);
-  const message = text.trim();
-  const Securitykey = crypto.randomBytes(rv);
-  const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
-  let encryptedData = cipher.update(message, "utf-8", "hex");
-  encryptedData += cipher.final("hex");
-  return encryptedData;
-};
 
 module.exports = signUp;
